@@ -1,8 +1,18 @@
 """
 Domain Randomization for Robust Policy Training.
 
-Randomizes plant parameters during training to ensure the learned
-policy generalizes to real hardware with parameter uncertainty.
+Implements parameters from Deep Loop Shaping paper PLUS our additions:
+
+FROM PAPER (Section S3.2):
+- Angular instability pole frequency variation
+- Seismic noise amplitude variation (0.5x - 3x)
+- Overall noise strength variation
+
+OUR ADDITIONS:
+- Mirror reflectivity variations 
+- Cavity length variation
+- Control delay variation
+- Mode-matching degradation
 """
 
 import numpy as np
@@ -12,25 +22,42 @@ from typing import Dict, Any, Optional
 
 @dataclass
 class RandomizationConfig:
-    """Configuration for domain randomization."""
+    """
+    Configuration for domain randomization.
     
-    # Mirror reflectivity variations (fraction)
-    reflectivity_range: tuple = (0.995, 1.005)
+    Parameters marked [PAPER] are from Deep Loop Shaping.
+    Parameters marked [OURS] are our additions for physics-based sim.
+    """
     
-    # Alignment offset range (nanoradians)
-    alignment_offset_range: tuple = (-50.0, 50.0)
+    # [PAPER] Angular instability pole frequency (normalized around 1.0)
+    # From paper: randomize the hard mode resonance frequency
+    pole_frequency_range: tuple = (0.8, 1.2)  # ±20%
     
-    # Noise scale multiplier range
-    noise_scale_range: tuple = (0.5, 2.0)
+    # [PAPER] Seismic noise amplitude multiplier
+    # From paper Section S3.2: "sample variations in the seismic noise"
+    seismic_amplitude_range: tuple = (0.5, 3.0)  # 0.5x to 3x
     
-    # Seismic amplitude variation
-    seismic_range: tuple = (0.5, 3.0)
+    # [PAPER] Overall noise strength multiplier
+    noise_strength_range: tuple = (0.5, 2.0)
     
-    # Cavity length variation (micrometers)
+    # [OURS] Mirror reflectivity variations (for Finesse)
+    reflectivity_range: tuple = (0.995, 1.005)  # ±0.5%
+    
+    # [OURS] Alignment offset range (nanoradians) - initial misalignment
+    alignment_offset_range: tuple = (-100.0, 100.0)
+    
+    # [OURS] Cavity length variation (micrometers)
     length_variation: tuple = (-0.1, 0.1)
     
-    # Time delay variation (samples at 256 Hz)
-    delay_range: tuple = (0, 3)
+    # [OURS] Control system delay variation (samples at 256 Hz)
+    # Paper mentions ~1ms latency; we randomize for robustness
+    delay_range: tuple = (0, 4)  # 0-4 samples = 0-16ms
+    
+    # [OURS] Mode-matching degradation (for Finesse physics)
+    mode_match_range: tuple = (0.95, 1.0)  # 95-100%
+    
+    # [OURS] Thermal drift rate (nrad/second)
+    thermal_drift_range: tuple = (-0.1, 0.1)
 
 
 class DomainRandomizer:
