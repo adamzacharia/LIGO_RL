@@ -37,7 +37,6 @@ pip install stable-baselines3  # For SAC baseline
 ## Project Structure
 
 ```
-src/
 ├── envs/           # Gymnasium environments (FinesseOMCEnv)
 ├── dreamer/        # Training scripts and network architectures
 ├── rewards/        # Frequency-domain filters
@@ -47,7 +46,7 @@ src/
 ## Quick Start
 
 ```python
-from src.envs import FinesseOMCEnv
+from envs import FinesseOMCEnv
 
 env = FinesseOMCEnv()
 obs, info = env.reset()
@@ -59,10 +58,10 @@ obs, reward, done, truncated, info = env.step(action)
 
 ```bash
 # Simple test (random policy)
-python src/dreamer/train.py --algorithm simple --steps 10000
+python dreamer/train.py --algorithm simple --steps 10000
 
 # SAC training
-python src/dreamer/train.py --algorithm sac --steps 100000 --logdir ./runs/exp1
+python dreamer/train.py --algorithm sac --steps 100000 --logdir ./runs/exp1
 ```
 
 ---

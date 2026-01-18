@@ -1,4 +1,4 @@
 # Environments package
-from .finesse_ligo_env import FinesseOMCEnv
+from envs.finesse_ligo_env import FinesseOMCEnv
 
 __all__ = ['FinesseOMCEnv']

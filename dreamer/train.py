@@ -9,7 +9,7 @@ For SAC baseline: pip install stable-baselines3
 
 Usage:
     conda activate finesse
-    python src/dreamer/train.py --steps 100000 --logdir ./runs/exp1
+    python dreamer/train.py --steps 100000 --logdir ./runs/exp1
 """
 
 import argparse
@@ -21,10 +21,10 @@ from datetime import datetime
 import numpy as np
 import yaml
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.envs import FinesseOMCEnv
+from envs import FinesseOMCEnv
 
 
 def load_config(config_path: str) -> dict:
