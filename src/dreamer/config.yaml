@@ -1,0 +1,80 @@
+# DreamerV3 Configuration for LIGO OMC Control
+# Based on danijar/dreamerv3 defaults, tuned for control tasks
+
+# Environment
+env:
+  name: "FinesseOMC-v0"
+  obs_type: "state"  # Low-dimensional state (not images)
+  action_repeat: 1
+  time_limit: 1024   # Episode length in steps
+
+# World Model (RSSM)
+world_model:
+  # Deterministic state size
+  deter_size: 512
+  # Stochastic state size (discrete)
+  stoch_size: 32
+  classes: 32
+  # Hidden layer sizes
+  hidden_size: 512
+  # GRU layers
+  gru_layers: 1
+  # Decoder/encoder sizes
+  embed_size: 256
+  
+# Actor-Critic
+actor:
+  layers: [256, 256]
+  activation: "silu"
+  dist: "normal"  # Continuous actions
+  std: "learned"
+  min_std: 0.1
+  max_std: 1.0
+
+critic:
+  layers: [256, 256]
+  activation: "silu"
+  
+# Training
+train:
+  batch_size: 16
+  batch_length: 64  # Sequence length for training
+  train_ratio: 512  # Train steps per env step
+  imagination_horizon: 15
+  
+  # Learning rates
+  model_lr: 1e-4
+  actor_lr: 3e-5
+  critic_lr: 3e-5
+  
+  # Discount
+  discount: 0.997  # Long horizon for control
+  lambda_: 0.95
+  
+  # Gradient clipping
+  grad_clip: 100.0
+  
+  # Loss weights
+  kl_scale: 0.1
+  reward_scale: 1.0
+  
+# Exploration
+explore:
+  expl_noise: 0.3
+  expl_decay: 0.9999
+  expl_min: 0.1
+
+# Replay Buffer
+replay:
+  size: 1000000   # 1M steps
+  min_size: 1000  # Start training after this many steps
+  
+# Logging
+log:
+  log_every: 1000
+  save_every: 10000
+  video_every: 50000
+  
+# Hardware
+device: "auto"  # auto, cpu, cuda
+seed: 42

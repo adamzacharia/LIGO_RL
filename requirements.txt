@@ -1,0 +1,21 @@
+# Core
+finesse>=3.0a0
+finesse-ligo
+gymnasium>=0.29.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# DreamerV3 (JAX-based)
+jax
+jaxlib
+flax>=0.8.0
+optax>=0.2.0
+tensorflow-probability>=0.23.0
+
+# Visualization
+matplotlib>=3.8.0
+tensorboard>=2.15.0
+
+# Utilities
+pyyaml>=6.0
+tqdm>=4.66.0
